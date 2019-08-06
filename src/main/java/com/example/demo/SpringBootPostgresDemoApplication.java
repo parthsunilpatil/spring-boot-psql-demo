@@ -116,7 +116,7 @@ public class SpringBootPostgresDemoApplication {
 		c = DriverManager.getConnection("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName, dbUser, dbPassword);
 		c.setAutoCommit(false);
 		s = c.createStatement();
-		ResultSet rs = s.executeQuery("select a.user_id, a.username, a.email, r.role from account a, role r where a.user_id = r.user_id");
+		ResultSet rs = s.executeQuery("select user_id, username, email from account");
 		JSONArray json = convert(rs);
 		return json.toString(2);
 	}
