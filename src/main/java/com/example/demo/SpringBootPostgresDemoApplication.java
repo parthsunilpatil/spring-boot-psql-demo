@@ -104,22 +104,30 @@ public class SpringBootPostgresDemoApplication {
 	}
 	
 	@RequestMapping("/accounts")
-	public String info(HttpServletRequest request) throws ClassNotFoundException, SQLException {
+	public String accounts(HttpServletRequest request) throws ClassNotFoundException, SQLException {
+		return sql("select a.*, r.* from account a, role r where a.user_id = r.user_id");
+	}
+
+	private String sql(String query) throws ClassNotFoundException, SQLException {
 		Connection c = null;
 		Statement s= null;
 		System.out.println("PG DETAILS:");
 		System.out.println("HOST: " + dbHost);
 		System.out.println("PORT: " + dbPort);
 		System.out.println("USER: " + dbUser);
+		System.out.println("DBNAME: " + dbName);
 		System.out.println("PASSWORD: " + dbPassword);
 		Class.forName("org.postgresql.Driver");
 		c = DriverManager.getConnection("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName, dbUser, dbPassword);
 		c.setAutoCommit(false);
 		s = c.createStatement();
-		ResultSet rs = s.executeQuery("select user_id, username, email from account");
+		ResultSet rs = s.executeQuery(query);
 		JSONArray json = convert(rs);
+		s.close();
+		c.close();
 		return json.toString(2);
 	}
+	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootPostgresDemoApplication.class, args);
 	}
